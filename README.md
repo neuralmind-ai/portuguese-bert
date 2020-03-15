@@ -41,7 +41,7 @@ Our PyTorch artifacts are compatible with the [🤗Huggingface Transformers](htt
     # or, using BertModel and BertTokenizer directly
     from transformers import BertModel, BertTokenizer
 
-    tokenizer = BertTokenizer.from_pretrained('path/to/vocab.txt')
+    tokenizer = BertTokenizer.from_pretrained('path/to/vocab.txt', do_lower_case=False)
     model = BertModel.from_pretrained('path/to/bert_dir')  # Or other BERT model class
 
 

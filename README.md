@@ -1,6 +1,6 @@
 ** **This is a work in progress** **
 
-# Portuguese BERT 
+# BERTimbau - Portuguese BERT 
 
 This repository contains pre-trained [BERT](https://github.com/google-research/bert) models trained on the Portuguese language. BERT-Base and BERT-Large Cased variants were trained on the [BrWaC (Brazilian Web as Corpus)](https://www.researchgate.net/publication/326303825_The_brWaC_Corpus_A_New_Open_Resource_for_Brazilian_Portuguese), a large Portuguese corpus, for 1,000,000 steps, using whole-word mask. Model artifacts for TensorFlow and PyTorch can be found below.
 

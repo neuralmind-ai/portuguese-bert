@@ -1,4 +1,3 @@
-\*\* **This is a work in progress** \*\*
 
 # BERTimbau - Portuguese BERT
 
@@ -10,17 +9,24 @@ The models are a result of an ongoing Master's Program. The [text submission for
 
 | Model | TensorFlow checkpoint | PyTorch checkpoint | Vocabulary |
 |-|:-------------------------: |:-----------------:|:----------:|
-|`bert-base-portuguese-cased`  | [Download](https://neuralmind-ai.s3.us-east-2.amazonaws.com/nlp/bert-base-portuguese-cased/bert-base-portuguese-cased_tensorflow_checkpoint.zip) | [Download](https://neuralmind-ai.s3.us-east-2.amazonaws.com/nlp/bert-base-portuguese-cased/bert-base-portuguese-cased_pytorch_checkpoint.zip) | [Download](https://neuralmind-ai.s3.us-east-2.amazonaws.com/nlp/bert-base-portuguese-cased/vocab.txt) |
-|`bert-large-portuguese-cased` | [Download](https://neuralmind-ai.s3.us-east-2.amazonaws.com/nlp/bert-large-portuguese-cased/bert-large-portuguese-cased_tensorflow_checkpoint.zip) | [Download](https://neuralmind-ai.s3.us-east-2.amazonaws.com/nlp/bert-large-portuguese-cased/bert-large-portuguese-cased_pytorch_checkpoint.zip) | [Download](https://neuralmind-ai.s3.us-east-2.amazonaws.com/nlp/bert-large-portuguese-cased/vocab.txt) |
+| BERTimbau Base (aka `bert-base-portuguese-cased`)  | [Download](https://neuralmind-ai.s3.us-east-2.amazonaws.com/nlp/bert-base-portuguese-cased/bert-base-portuguese-cased_tensorflow_checkpoint.zip) | [Download](https://neuralmind-ai.s3.us-east-2.amazonaws.com/nlp/bert-base-portuguese-cased/bert-base-portuguese-cased_pytorch_checkpoint.zip) | [Download](https://neuralmind-ai.s3.us-east-2.amazonaws.com/nlp/bert-base-portuguese-cased/vocab.txt) |
+| BERTimbau Large (aka `bert-large-portuguese-cased`) | [Download](https://neuralmind-ai.s3.us-east-2.amazonaws.com/nlp/bert-large-portuguese-cased/bert-large-portuguese-cased_tensorflow_checkpoint.zip) | [Download](https://neuralmind-ai.s3.us-east-2.amazonaws.com/nlp/bert-large-portuguese-cased/bert-large-portuguese-cased_pytorch_checkpoint.zip) | [Download](https://neuralmind-ai.s3.us-east-2.amazonaws.com/nlp/bert-large-portuguese-cased/vocab.txt) |
 
-## NER Benchmarks
+## Evaluation benchmarks
 
-The models were benchmarked on the Named Entity Recognition task and compared to previous published results and [Multilingual BERT](https://github.com/google-research/bert/blob/master/multilingual.md). Reported results are for BERT or BERT-CRF architectures, while other results comprise distinct methods. Code and instructions to reproduce the experiments are in [`ner_evaluation/`](ner_evaluation/) directory.
+The models were benchmarked on three tasks (Sentence Textual Similarity, Recognizing Textual Entailment and Named Entity Recognition) and compared to previous published results and [Multilingual BERT](https://github.com/google-research/bert/blob/master/multilingual.md). Metrics are: Pearson's correlation for STS and F1-score for RTE and NER.
 
-| Test Dataset           | BERTimbau-Large | BERTimbau-Base | BERT-Base Multilingual |      Previous SOTA    |
-| ---------------------- | :-------------: | :------------: | :--------------------: | :-----------------------------------------------: |
-| MiniHAREM (5 classes)  |    **83.30**    |     83.03      |         79.44          | 82.26 [[1]](#References), 76.27[[2]](#References) |
-| MiniHAREM (10 classes) |    **78.67**    |     77.98      |         74.15          | 74.64 [[1]](#References), 70.33[[2]](#References) |
+| Task | Test Dataset           | BERTimbau-Large | BERTimbau-Base | mBERT  |      Previous SOTA    |
+|:----:|:----------------------:|:---------------:|:-------------: | :-----:| :--------------------:| 
+| STS  | ASSIN2                 |    **0.852**    |     0.836      |  0.809 | 0.83 [[1]](#References) |
+| RTE  | ASSIN2                 |    **90.0**     |     89.2       |  86.8  | 88.3 [[1]](#References) |
+| NER  | MiniHAREM (5 classes)  |    **83.7**     |     83.1       |  79.2  | 82.3 [[2]](#References) |
+| NER  | MiniHAREM (10 classes) |    **78.5**     |     77.6       |  73.1  | 74.6 [[2]](#References) |
+
+### NER experiments code
+
+Code and instructions to reproduce the Named Entity Recognition experiments are in [`ner_evaluation/`](ner_evaluation/) directory.
+
 
 ## PyTorch usage example
 
@@ -54,9 +60,10 @@ We would like to thank Google for Cloud credits under a research grant that allo
 
 ## References
 
-[1] [Assessing the Impact of Contextual Embeddings for Portuguese Named Entity Recognition](https://github.com/jneto04/ner-pt)
+[1] [Multilingual Transformer Ensembles for Portuguese Natural Language Task](https://www.researchgate.net/publication/340236502_Multilingual_Transformer_Ensembles_for_Portuguese_Natural_Language_Tasks)
 
-[2] [Portuguese Named Entity Recognition using LSTM-CRF](https://www.researchgate.net/publication/326301193_Portuguese_Named_Entity_Recognition_using_LSTM-CRF)
+[2] [Assessing the Impact of Contextual Embeddings for Portuguese Named Entity Recognition](https://github.com/jneto04/ner-pt)
+
 
 ## How to cite this work
 

@@ -85,7 +85,6 @@ def read_examples(input_file: str,
                 document text using `start_offset` and `end_offset`, e.g.,
                 `doc_text[start_offset:end_offset]`.
     """
-    import pdb; pdb.set_trace()
     scheme = scheme.upper()
     if scheme not in SCHEMES:
         raise ValueError("Invalid tagging scheme `{}`.".format(scheme))
@@ -103,9 +102,7 @@ def read_examples(input_file: str,
         # Perform whitespace and punctuation tokenization keeping track of char
         # alignment (char_to_word_offset)
         doc_tokens, char_to_word_offset = tokenizer_with_alignment(doc_text)
-        labels = None
-        if is_training:
-            labels = ["O"] * len(doc_tokens)
+        labels = ["O"] * len(doc_tokens)
         tags = []
 
         def set_label(index, tag):
@@ -114,14 +111,14 @@ def read_examples(input_file: str,
                                labels[index], index, tag)
             labels[index] = tag
 
-        for entity in document["entities"]:
-            entity_id = entity["entity_id"]
-            entity_text = entity["text"]
-            entity_type = entity["label"]
-            start_token = None
-            end_token = None
+        if is_training:
+            for entity in document["entities"]:
+                entity_id = entity["entity_id"]
+                entity_text = entity["text"]
+                entity_type = entity["label"]
+                start_token = None
+                end_token = None
 
-            if is_training:
                 entity_start_offset = entity["start_offset"]
                 entity_end_offset = entity["end_offset"]
                 start_token = char_to_word_offset[entity_start_offset]
@@ -129,18 +126,13 @@ def read_examples(input_file: str,
                 # entity_text == doc_text[start_offset:end_offset]
                 end_token = char_to_word_offset[entity_end_offset - 1]
 
-                try:
-                    assert start_token <= end_token, \
-                        "End token cannot come before start token."
-                    reconstructed_text = reconstruct_text_from_tokens(
-                        doc_tokens[start_token:(end_token + 1)])
-                    assert entity_text.strip() == reconstructed_text, \
-                        "Entity text and reconstructed text are not equal: %s != %s" % (
-                            entity_text, reconstructed_text)
-                except AssertionError:
-                    LOGGER.warning("Ran into an AssertionError")
-                    import pdb
-                    pdb.set_trace()
+                assert start_token <= end_token, \
+                    "End token cannot come before start token."
+                reconstructed_text = reconstruct_text_from_tokens(
+                    doc_tokens[start_token:(end_token + 1)])
+                assert entity_text.strip() == reconstructed_text, \
+                    "Entity text and reconstructed text are not equal: %s != %s" % (
+                        entity_text, reconstructed_text)
 
                 if scheme == 'BILUO':
                     # BILUO scheme
@@ -167,15 +159,15 @@ def read_examples(input_file: str,
                             tag = 'I-' + entity_type
                         set_label(token_index, tag)
 
-            entity = NETag(
-                doc_id,
-                entity_id,
-                entity_text,
-                entity_type,
-                start_token,
-                end_token,
-            )
-            tags.append(entity)
+                entity = NETag(
+                    doc_id,
+                    entity_id,
+                    entity_text,
+                    entity_type,
+                    start_token,
+                    end_token,
+                )
+                tags.append(entity)
 
         example = Example(
             doc_id=doc_id,
@@ -308,12 +300,11 @@ def convert_examples_to_spans(examples: List[Example],
                 # Mask all subtokens (j > 0)
                 all_prediction_mask.append(j == 0)
 
-                if is_training:
-                    if j == 0:
-                        label = doc_labels[i]
-                        all_doc_labels.append(label)
-                    else:
-                        all_doc_labels.append('X')
+                if j == 0:
+                    label = doc_labels[i]
+                    all_doc_labels.append(label)
+                else:
+                    all_doc_labels.append('X')
 
         assert len(all_doc_tokens) == len(all_prediction_mask)
         if is_training:
@@ -391,6 +382,11 @@ def convert_examples_to_spans(examples: List[Example],
                     label_ids.append(ner_tags_converter.ignore_index)
                 prediction_mask.append(False)
 
+            # If not training, use placeholder labels
+            if not is_training:
+                labels = ['O'] * len(input_ids)
+                label_ids = [ner_tags_converter.ignore_index] * len(input_ids)
+
             assert len(input_ids) == max_seq_length
             assert len(input_mask) == max_seq_length
             assert len(segment_ids) == max_seq_length
@@ -466,7 +462,7 @@ def get_features_from_examples(examples: List[Example],
                                ) -> List[InputSpan]:
     """Convert examples to input spans. Read from cache if possible."""
 
-    assert mode in ('train', 'valid', 'eval'), "Invalid mode."
+    assert mode in ('train', 'valid', 'eval', 'inference'), "Invalid mode."
     examples_file = getattr(args, mode + '_file') or mode
 
     cached_features_file = examples_file + '_{0}_{1}_{2}'.format(

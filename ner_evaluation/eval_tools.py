@@ -1,9 +1,10 @@
-from collections import defaultdict
+import contextlib
+import json
+import sys
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import numpy as np
-import torch
-from seqeval.metrics import f1_score
+from seqeval.metrics.sequence_labeling import get_entities
 
 from preprocessing import Example, InputSpan
 
@@ -229,6 +230,20 @@ class SequenceMetrics(object):
         return values
 
 
+@contextlib.contextmanager
+def smart_open(filename=None):
+    if filename and filename != '-':
+        fh = open(filename, 'w')
+    else:
+        fh = sys.stdout
+
+    try:
+        yield fh
+    finally:
+        if fh is not sys.stdout:
+            fh.close()
+
+
 def write_conll_prediction_file(
         out_file: str,
         examples: List[Example],
@@ -249,11 +264,11 @@ def write_conll_prediction_file(
     Raises:
         AssertionError: if (a) the lengths of y_preds and examples are not
             equal, or (b) there is a mismatch in length of tokens, labels or
-            predicted tags for any example. 
+            predicted tags for any example.
     """
     assert len(y_preds) == len(examples)
 
-    with open(out_file, 'w') as fd:
+    with smart_open(out_file) as fd:
         for example, pred_tag in zip(examples, y_preds):
 
             tokens = example.doc_tokens
@@ -267,3 +282,39 @@ def write_conll_prediction_file(
 
             # Separate examples by line break
             fd.write('\n')
+
+
+def write_outputs_to_json(out_file: str,
+                          examples: List[Example],
+                          y_preds: List[TAG_SEQUENCE]) -> None:
+    """Writes a JSON with prediction outputs.
+
+    Args:
+        out_file: path to an output file or '-' to use stdout.
+        examples: list of Example instances with associated tokens.
+        y_preds: list of predicted tag sequences for each example.
+    """
+    output = []
+    for example, y_pred in zip(examples, y_preds):
+        predicted_entities = []
+
+        for entity in get_entities(y_pred):
+            entity_class, start_token_ix, end_token_ix = entity
+            start_char = example.doc_tokens[start_token_ix].offset
+            end_token = example.doc_tokens[end_token_ix]
+            end_char = end_token.offset + len(end_token)
+
+            predicted_entities.append({
+                'class': entity_class,
+                'start_char': start_char,
+                'end_char': end_char,
+                'text': example.orig_text[start_char:end_char],
+            })
+        output.append({
+            'doc_id': example.doc_id,
+            'text': example.orig_text,
+            'entities': predicted_entities,
+        })
+
+    with smart_open(out_file) as fd:
+        json.dump(output, fd)

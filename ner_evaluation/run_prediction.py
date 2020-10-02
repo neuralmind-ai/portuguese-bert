@@ -167,6 +167,7 @@ if __name__ == "__main__":
         args.labels_file, scheme=args.scheme.upper())
 
     args.num_labels = tag_encoder.num_labels
+    args.override_cache = True
 
     # Load a pretrained model
     model = load_model(args, args.bert_model, training=False)

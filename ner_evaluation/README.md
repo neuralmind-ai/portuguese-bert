@@ -12,7 +12,7 @@ This directory has code to train and evaluate BERT based models on NER task usin
 - BERT-LSTM-CRF
 - BERT-LSTM
 
-The entry point script file is `run_bert_harem.py`. All other files are modules. Commands to train and evaluate our BERT models on HAREM datasets are below for each distinct setup: Total and Selective scenarios, feature-based and Fine-tuning approaches, with and without CRF.
+The training and evaluation entry point script is `run_bert_harem.py`. `run_prediction.py` can be used to run inference on new data. All other files are modules. Commands to train and evaluate our BERT models on HAREM datasets are below for each distinct setup: Total and Selective scenarios, feature-based and Fine-tuning approaches, with and without CRF.
 
 ## Environment Setup
 
@@ -29,23 +29,48 @@ continuing or create an virtual environment using other tools and skip to step 3
     # or, for older versions of Conda,
     $ source activate bert_crf
 
-3- Install PyTorch 1.1.0. If you have a GPU properly configured, install PyTorch using a compatible CUDA version.
-Otherwise install CPU build. Other PyTorch versions were not tested.
-
-    # CPU
-    $ pip install https://download.pytorch.org/whl/cpu/torch-1.1.0-cp36-cp36m-linux_x86_64.whl
-    # CUDA 10 build
-    $ pip install https://download.pytorch.org/whl/cu100/torch-1.1.0-cp36-cp36m-linux_x86_64.whl
-    # CUDA 9.0 build
-    $ pip install https://download.pytorch.org/whl/cu90/torch-1.1.0-cp36-cp36m-linux_x86_64.whl
+3- Install **PyTorch 1.1.0** using pip or conda (instructions at [PyTorch Get Started guide](https://pytorch.org/get-started/previous-versions/#v110)). Other PyTorch versions were not tested.
 
 4- Install other requirements
 
     $ pip install -r requirements.txt
 
-## Datasets
+## Trained models
 
-The `data` directory contains the preprocessed HAREM datasets for both Selective and Total scenarios converted to JSON format. First HAREM is split in train/dev sets and Mini HAREM is used as test set. These JSON files are produced from original HAREM XML files using [this script](https://github.com/fabiocapsouza/harem_preprocessing). Train/dev split is done separately.
+Here are two checkpoints of trained NER models on First HAREM dataset.
+
+[BERTimbau Base - BERT-CRF (selective scenario, 5 classes)](https://drive.google.com/file/d/125AMFLsAf33isxTumujUAYBVkoxE7zeT/view?usp=sharing)
+
+[BERTimbau Base - BERT-CRF (total scenario, 10 classes)](https://drive.google.com/file/d/12PE1ypJ949rpatseSV37NXnHwB2Y8jZ5/view?usp=sharing)
+
+## Running inference
+
+The script `run_inference.py` can be used to get predictions for new text using a trained NER model.
+Instructions:
+
+1.  Download and extract a trained model checkpoint from above or train your own (instructions below).
+
+2.  Save the inference data in a txt file (for a single input document) or in a JSON file (for multiple documents):
+
+        # inference_text.txt
+        Pink Floyd foi uma banda britânica de rock formada em Londres em 1965.
+        O grupo foi fundado pelos estudantes Syd Barrett (guitarra, vocal), Nick Mason (bateria), Roger Waters (baixo, voz) e Richard Wright (teclados, voz). Sob a liderança de Barrett, eles lançaram dois singles e um álbum de estreia de sucesso, The Piper at the Gates of Dawn (1967).
+
+        # inference_data.json
+        [{"doc_id": 0, "text": "Text of the 1st document"}, {"doc_id": 1, "text": "Text of the 2nd document"}]
+
+3.  Run inference command. This command assumes a downloaded checkpoint that was extracted in `bertimbau-base_bert-crf_total/`. Use the `--help` flag to display extra information about `--output_format` and `--output_file`.
+
+        python run_inference.py \
+          --bert_model bertimbau-base_bert-crf_total/ \
+          --labels_file bertimbau-base_bert-crf_total/classes.txt \
+          --input_file inference_text.txt \
+          --output_format json \
+          --output_file -
+
+    By default, predictions will be printed in JSON format to stdout:
+
+        [{"doc_id": 0, "text": "Pink Floyd foi uma banda brit\u00e2nica de rock formada em Londres em 1965.\nO grupo foi fundado pelos estudantes Syd Barrett (guitarra, vocal), Nick Mason (bateria), Roger Waters (baixo, voz) e Richard Wright (teclados, voz). Sob a lideran\u00e7a de Barrett, eles lan\u00e7aram dois singles e um \u00e1lbum de estreia de sucesso, The Piper at the Gates of Dawn (1967).", "entities": [{"class": "PESSOA", "start_char": 0, "end_char": 11, "text": "Pink Floyd "}, {"class": "LOCAL", "start_char": 54, "end_char": 62, "text": "Londres "}, {"class": "TEMPO", "start_char": 65, "end_char": 69, "text": "1965"}, {"class": "PESSOA", "start_char": 108, "end_char": 120, "text": "Syd Barrett "}, {"class": "PESSOA", "start_char": 139, "end_char": 150, "text": "Nick Mason "}, {"class": "PESSOA", "start_char": 161, "end_char": 174, "text": "Roger Waters "}, {"class": "PESSOA", "start_char": 189, "end_char": 204, "text": "Richard Wright "}, {"class": "PESSOA", "start_char": 240, "end_char": 247, "text": "Barrett"}, {"class": "OBRA", "start_char": 310, "end_char": 341, "text": "The Piper at the Gates of Dawn "}, {"class": "TEMPO", "start_char": 342, "end_char": 346, "text": "1967"}]}]
 
 ## Running NER trainings and evaluations
 
@@ -62,7 +87,13 @@ When the training ends, some metrics are displayed on the terminal for validatio
 - Recall
 - Classification Report: metrics per class. The micro avg line displays CoNLL equivalent metrics.
 
-**Important**: running this script in multi-GPU setup **is not recommended**. If the machine has multiple GPUs, limit the GPU visibility setting the `CUDA_VISIBLE_DEVICES` environment variable. Example:
+#### Datasets
+
+The `data` directory contains the preprocessed HAREM datasets for both Selective and Total scenarios converted to JSON format. First HAREM is split in train/dev sets and Mini HAREM is used as test set. These JSON files are produced from original HAREM XML files using [this script](https://github.com/fabiocapsouza/harem_preprocessing). Train/dev split is done separately.
+
+#### Important: Multi-GPU and FP16
+
+Running this script in multi-GPU setup **is not recommended**. If the machine has multiple GPUs, limit the GPU visibility setting the `CUDA_VISIBLE_DEVICES` environment variable. Example:
 
     # Only GPU 0 will be visible
     CUDA_VISIBLE_DEVICES=0 python run_bert_harem.py [...]

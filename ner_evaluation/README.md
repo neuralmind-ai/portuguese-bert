@@ -12,7 +12,7 @@ This directory has code to train and evaluate BERT based models on NER task usin
 - BERT-LSTM-CRF
 - BERT-LSTM
 
-The training and evaluation entry point script is `run_bert_harem.py`. `run_prediction.py` can be used to run inference on new data. All other files are modules. Commands to train and evaluate our BERT models on HAREM datasets are below for each distinct setup: Total and Selective scenarios, feature-based and Fine-tuning approaches, with and without CRF.
+The training and evaluation entry point script is `run_bert_harem.py`. `run_inference.py` can be used to run inference on new data. All other files are modules. Commands to train and evaluate our BERT models on HAREM datasets are below for each distinct setup: Total and Selective scenarios, feature-based and Fine-tuning approaches, with and without CRF.
 
 ## Environment Setup
 

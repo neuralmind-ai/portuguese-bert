@@ -57,7 +57,7 @@ Instructions:
         O grupo foi fundado pelos estudantes Syd Barrett (guitarra, vocal), Nick Mason (bateria), Roger Waters (baixo, voz) e Richard Wright (teclados, voz). Sob a liderança de Barrett, eles lançaram dois singles e um álbum de estreia de sucesso, The Piper at the Gates of Dawn (1967).
 
         # inference_data.json
-        [{"doc_id": 0, "text": "Text of the 1st document"}, {"doc_id": 1, "text": "Text of the 2nd document"}]
+        [{"doc_id": 0, "doc_text": "Text of the 1st document"}, {"doc_id": 1, "doc_text": "Text of the 2nd document"}]
 
 3.  Run inference command. This command assumes a downloaded checkpoint that was extracted in `bertimbau-base_bert-crf_total/`. Use the `--help` flag to display extra information about `--output_format` and `--output_file`.
 

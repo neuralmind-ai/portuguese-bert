@@ -7,10 +7,8 @@ The models are a result of an ongoing Master's Program. The [text submission for
 
 ## Download
 
-| Model | TensorFlow checkpoint | PyTorch checkpoint | Vocabulary |
-|-|:-------------------------: |:-----------------:|:----------:|
-| BERTimbau Base (aka `bert-base-portuguese-cased`)  | [Download](https://neuralmind-ai.s3.us-east-2.amazonaws.com/nlp/bert-base-portuguese-cased/bert-base-portuguese-cased_tensorflow_checkpoint.zip) | [Download](https://neuralmind-ai.s3.us-east-2.amazonaws.com/nlp/bert-base-portuguese-cased/bert-base-portuguese-cased_pytorch_checkpoint.zip) | [Download](https://neuralmind-ai.s3.us-east-2.amazonaws.com/nlp/bert-base-portuguese-cased/vocab.txt) |
-| BERTimbau Large (aka `bert-large-portuguese-cased`) | [Download](https://neuralmind-ai.s3.us-east-2.amazonaws.com/nlp/bert-large-portuguese-cased/bert-large-portuguese-cased_tensorflow_checkpoint.zip) | [Download](https://neuralmind-ai.s3.us-east-2.amazonaws.com/nlp/bert-large-portuguese-cased/bert-large-portuguese-cased_pytorch_checkpoint.zip) | [Download](https://neuralmind-ai.s3.us-east-2.amazonaws.com/nlp/bert-large-portuguese-cased/vocab.txt) |
+The base and large models are available at [Hugging Face](https://huggingface.co/neuralmind)
+
 
 ## Evaluation benchmarks
 

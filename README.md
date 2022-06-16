@@ -65,12 +65,19 @@ We would like to thank Google for Cloud credits under a research grant that allo
 
 ## How to cite this work
 
-    @inproceedings{souza2020bertimbau,
-        author    = {Souza, F{\'a}bio and Nogueira, Rodrigo and Lotufo, Roberto},
-        title     = {{BERT}imbau: pretrained {BERT} models for {B}razilian {P}ortuguese},
-        booktitle = {9th Brazilian Conference on Intelligent Systems, {BRACIS}, Rio Grande do Sul, Brazil, October 20-23 (to appear)},
-        year      = {2020}
+    @InProceedings{souza2020bertimbau,
+        author="Souza, F{\'a}bio and Nogueira, Rodrigo and Lotufo, Roberto",
+        editor="Cerri, Ricardo and Prati, Ronaldo C.",
+        title="BERTimbau: Pretrained BERT Models for Brazilian Portuguese",
+        booktitle="Intelligent Systems",
+        year="2020",
+        publisher="Springer International Publishing",
+        address="Cham",
+        pages="403--417",
+        isbn="978-3-030-61377-8"
     }
+
+
 
     @article{souza2019portuguese,
         title={Portuguese Named Entity Recognition using BERT-CRF},
